@@ -1,3 +1,4 @@
+import API from "../api/axios";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -13,11 +14,7 @@ export default function Signup() {
 
   const handleSignup = async () => {
     try {
-      await axios.post(
-        "http://localhost:5000/api/signup",
-        form
-      );
-
+     const res = await API.post("/signup", { name, email, password });
       alert("Signup successful 🎉");
 
       navigate("/");
