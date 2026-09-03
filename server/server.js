@@ -1,30 +1,28 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 require("dotenv").config();
 
 const User = require("./models/User");
 
 const app = express();
 
-
 // =======================
 // Middleware
 // =======================
-const cors = require("cors");
 
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-// Explicitly handle OPTIONS preflight requests
-app.options("*", cors());
 app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));
 app.use("/api/notifications", require("./routes/notificationRoutes"));
-
 
 // =======================
 // Routes
@@ -34,34 +32,22 @@ const authRoutes = require("./routes/auth");
 const groupRoutes = require("./routes/groupRoutes");
 const noteRoutes = require("./routes/notes");
 
-
 // Auth
 app.use("/api", authRoutes);
-
 
 // Groups
 app.use("/api/groups", groupRoutes);
 
-
 // Notes
 app.use("/api/notes", noteRoutes);
-
-
 
 // =======================
 // Test Route
 // =======================
 
-app.get("/", (req,res)=>{
-    res.send("LearnMate API running 🚀");
+app.get("/", (req, res) => {
+  res.send("LearnMate API running 🚀");
 });
-
-
-
-
-// =======================
-// Profile Route
-// =======================
 
 // =======================
 // Profile Routes
@@ -82,7 +68,7 @@ app.get("/api/profile", authMiddleware, async (req, res) => {
   }
 });
 
-// PUT Update Profile (ADD THIS BLOCK)
+// PUT Update Profile
 app.put("/api/profile", authMiddleware, async (req, res) => {
   try {
     const { name, bio, learningGoal } = req.body;
@@ -104,29 +90,22 @@ app.put("/api/profile", authMiddleware, async (req, res) => {
   }
 });
 
-
-
-
 // =======================
 // MongoDB
 // =======================
 
-console.log("Mongo:",
-process.env.MONGO_URI);
+console.log("Mongo:", process.env.MONGO_URI);
 
-
-mongoose.connect(process.env.MONGO_URI,{
-    serverSelectionTimeoutMS:5000
-})
-.then(()=>{
+mongoose
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 5000,
+  })
+  .then(() => {
     console.log("DB Connected ✅");
-})
-.catch(err=>{
-    console.log("Mongo error:",err.message);
-});
-
-
-
+  })
+  .catch((err) => {
+    console.log("Mongo error:", err.message);
+  });
 
 // =======================
 // Server
