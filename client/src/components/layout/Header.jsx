@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
-import NotificationDropdown from "./NotificationDropdown";
-import ProfileModal from "../profile/ProfileModal";
-
+import NotificationDropdown from "./NotificationDropDown";
+import ProfileModal from "../profile/profileModal";
 export default function Header() {
   const [showProfile, setShowProfile] = useState(false);
   const [currentUser, setCurrentUser] = useState({
