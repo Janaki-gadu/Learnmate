@@ -1,6 +1,5 @@
 import API from "../api/axios";
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Signup() {
@@ -14,11 +13,12 @@ export default function Signup() {
 
   const handleSignup = async () => {
     try {
-     const res = await API.post("/signup", { name, email, password });
+      const res = await API.post("/signup", form);
       alert("Signup successful 🎉");
 
       navigate("/");
     } catch (err) {
+      console.error("Signup error:", err.response?.data || err.message);
       alert(err.response?.data?.message || "Signup failed");
     }
   };
@@ -26,7 +26,6 @@ export default function Signup() {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-
         <div style={{ fontSize: "60px" }}>📚</div>
 
         <h1 style={styles.title}>Create Account</h1>
@@ -38,6 +37,7 @@ export default function Signup() {
         <input
           type="text"
           placeholder="Name"
+          value={form.name}
           style={styles.input}
           onChange={(e) =>
             setForm({ ...form, name: e.target.value })
@@ -47,6 +47,7 @@ export default function Signup() {
         <input
           type="email"
           placeholder="Email"
+          value={form.email}
           style={styles.input}
           onChange={(e) =>
             setForm({ ...form, email: e.target.value })
@@ -56,6 +57,7 @@ export default function Signup() {
         <input
           type="password"
           placeholder="Password"
+          value={form.password}
           style={styles.input}
           onChange={(e) =>
             setForm({ ...form, password: e.target.value })
@@ -70,7 +72,6 @@ export default function Signup() {
           Already have an account?{" "}
           <Link to="/">Login</Link>
         </p>
-
       </div>
     </div>
   );
