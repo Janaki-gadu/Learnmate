@@ -12,19 +12,14 @@ export default function Login() {
     try {
       const res = await API.post("/login", form);
 
-      // Extract raw token whether the backend sends { token: "..." } or a raw string
-      const rawToken = res.data?.token || res.data;
+      const token = res.data?.token || res.data;
+      const user = res.data?.user || res.data;
 
-      // Save under both keys so any component or Axios interceptor finds what it needs
+      localStorage.setItem("token", typeof token === "string" ? token : JSON.stringify(token));
       localStorage.setItem("profile", JSON.stringify(res.data));
-      localStorage.setItem(
-        "token",
-        typeof rawToken === "string" ? rawToken : JSON.stringify(rawToken)
-      );
+      localStorage.setItem("user", JSON.stringify(user));
 
       alert("Login successful 🎉");
-
-      // Full redirect to mount dashboard cleanly
       window.location.href = "/dashboard";
     } catch (err) {
       console.error("Login error:", err.response?.data || err.message);
@@ -37,7 +32,7 @@ export default function Login() {
       <div style={styles.card}>
         <div style={{ fontSize: "60px" }}>📚</div>
 
-        <h1 style={styles.title}>Welcome Back</h1>
+        <h1 style={styles.title}>Welcome</h1>
 
         <p style={styles.subtitle}>Log in to LearnMate</p>
 

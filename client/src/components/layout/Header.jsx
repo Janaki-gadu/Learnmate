@@ -1,15 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import NotificationDropdown from "./NotificationDropDown";
 import ProfileModal from "../profile/profileModal";
+
 export default function Header() {
   const [showProfile, setShowProfile] = useState(false);
   const [currentUser, setCurrentUser] = useState({
-    name: "Jaanu",
-    email: "janaki@learnmate.dev",
+    name: "",
+    email: "",
     bio: "Full Stack Developer",
     learningGoal: "Building MERN Apps",
   });
+
+  useEffect(() => {
+    try {
+      const rawUser = localStorage.getItem("user") || localStorage.getItem("profile");
+      if (rawUser) {
+        const parsed = JSON.parse(rawUser);
+        const data = parsed?.user || parsed;
+
+        setCurrentUser((prev) => ({
+          ...prev,
+          name: data?.name || data?.username || "User",
+          email: data?.email || "",
+        }));
+      }
+    } catch (e) {
+      console.error("Failed to parse user profile:", e);
+    }
+  }, []);
 
   return (
     <>
@@ -29,7 +48,6 @@ export default function Header() {
 
         {/* Right Controls */}
         <div className="flex items-center gap-3">
-          {/* Notifications */}
           <NotificationDropdown />
 
           {/* Clickable Profile Trigger */}
@@ -37,14 +55,16 @@ export default function Header() {
             onClick={() => setShowProfile(true)}
             className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-2xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition text-left cursor-pointer"
           >
-            <div className="h-9 w-9 bg-indigo-600 text-white font-bold rounded-xl flex items-center justify-center text-sm shadow-sm">
-              {currentUser.name.charAt(0).toUpperCase()}
+            <div className="h-9 w-9 bg-indigo-600 text-white font-bold rounded-xl flex items-center justify-center text-sm shadow-sm capitalize">
+              {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "U"}
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-800 leading-tight">
+              <p className="text-sm font-bold text-gray-800 leading-tight capitalize">
                 {currentUser.name}
               </p>
-              <p className="text-[11px] text-gray-400 font-medium">Learner</p>
+              <p className="text-[11px] text-gray-400 font-medium">
+                {currentUser.email}
+              </p>
             </div>
           </button>
         </div>
