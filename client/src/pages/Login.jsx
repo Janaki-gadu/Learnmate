@@ -1,10 +1,8 @@
 import API from "../api/axios";
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Login() {
-  const navigate = useNavigate();
-
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -12,16 +10,15 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      // 1. Send login credentials to backend
       const res = await API.post("/login", form);
 
-      // 2. Persist user session & token for axios interceptor
+      // Save user session & auth token
       localStorage.setItem("profile", JSON.stringify(res.data));
 
       alert("Login successful 🎉");
 
-      // 3. Redirect to dashboard
-      navigate("/dashboard");
+      // Direct full-page redirect to dashboard
+      window.location.href = "/dashboard";
     } catch (err) {
       console.error("Login error:", err.response?.data || err.message);
       alert(err.response?.data?.message || "Login failed");
