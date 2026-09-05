@@ -28,10 +28,24 @@ export default function Dashboard() {
     return [...noteList].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
   };
 
+  // Helper to reliably retrieve the JWT token from localStorage
+  const getAuthToken = () => {
+    const storedProfile = localStorage.getItem("profile");
+    if (storedProfile) {
+      try {
+        const parsed = JSON.parse(storedProfile);
+        return parsed?.token || parsed;
+      } catch {
+        return storedProfile;
+      }
+    }
+    return localStorage.getItem("token");
+  };
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = getAuthToken();
 
         if (!token) {
           navigate("/");
@@ -59,7 +73,7 @@ export default function Dashboard() {
     if (!window.confirm("Are you sure you want to delete this note?")) return;
 
     try {
-      const token = localStorage.getItem("token");
+      const token = getAuthToken();
 
       await API.delete(`/notes/${id}`, {
         headers: {
@@ -69,7 +83,7 @@ export default function Dashboard() {
 
       setNotes((prev) => prev.filter((note) => note._id !== id));
     } catch (error) {
-      console.error(error);
+      console.error("Delete Note Error:", error);
       alert("Failed to delete note");
     }
   };
