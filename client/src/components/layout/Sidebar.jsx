@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -10,9 +11,26 @@ import {
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("Learner");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("profile");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Extracts name from nested user object or root object
+        const name = parsed?.user?.name || parsed?.name || "Learner";
+        setUserName(name);
+      }
+    } catch (e) {
+      console.error("Failed to parse user profile:", e);
+    }
+  }, []);
 
   const handleLogout = () => {
+    // Clear all auth keys
     localStorage.removeItem("token");
+    localStorage.removeItem("profile");
     navigate("/");
   };
 
@@ -36,7 +54,9 @@ export default function Sidebar() {
         {/* Profile Card */}
         <div className="bg-indigo-500/80 border border-indigo-400/40 rounded-3xl p-5 mt-8">
           <p className="text-indigo-200 text-sm font-medium">Welcome back</p>
-          <h2 className="text-2xl font-bold mt-1 text-white">Jaanu</h2>
+          <h2 className="text-2xl font-bold mt-1 text-white capitalize">
+            {userName}
+          </h2>
         </div>
 
         {/* Navigation */}
