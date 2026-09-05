@@ -7,9 +7,7 @@ const bcrypt = require("bcrypt");
 // ================= SIGNUP =================
 
 router.post("/signup", async (req, res) => {
-
   try {
-
     const { name, email, password } = req.body;
 
     // Check existing user
@@ -17,7 +15,7 @@ router.post("/signup", async (req, res) => {
 
     if (existingUser) {
       return res.status(400).json({
-        message: "User already exists"
+        message: "User already exists",
       });
     }
 
@@ -28,69 +26,50 @@ router.post("/signup", async (req, res) => {
     const user = new User({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     await user.save();
 
-    res.json({
-      message: "User created successfully"
+    res.status(201).json({
+      message: "User created successfully",
     });
-
   } catch (err) {
-
-    console.log(err);
-
+    console.log("SIGNUP ERROR:", err);
     res.status(500).json({
-      error: err.message
+      error: err.message,
     });
-
   }
-
 });
 
 // ================= LOGIN =================
 
 router.post("/login", async (req, res) => {
-
   try {
-
     console.log("LOGIN API HIT");
 
     const { email, password } = req.body;
-
     console.log("EMAIL:", email);
 
     // Find user
     const user = await User.findOne({ email });
-
     console.log("FOUND USER:", user);
 
     if (!user) {
-
       return res.status(400).json({
-        message: "Invalid credentials"
+        message: "Invalid credentials",
       });
-
     }
 
     // Compare password
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
-
+    const isMatch = await bcrypt.compare(password, user.password);
     console.log("PASSWORD MATCH:", isMatch);
 
     if (!isMatch) {
-
       return res.status(400).json({
-        message: "Invalid credentials"
+        message: "Invalid credentials",
       });
-
     }
-
-    console.log("JWT SECRET:", process.env.JWT_SECRET);
 
     // Generate token
     const token = jwt.sign(
@@ -101,21 +80,22 @@ router.post("/login", async (req, res) => {
 
     console.log("TOKEN GENERATED");
 
-    res.json({
+    // Send successful response with token AND user object
+    res.status(200).json({
       message: "Login successful",
-      token
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
-
   } catch (err) {
-
-    console.log("LOGIN ERROR:");
-    console.log(err);
-
+    console.log("LOGIN ERROR:", err);
     res.status(500).json({
-      error: err.message
+      error: err.message,
     });
-
   }
-
 });
+
 module.exports = router;
