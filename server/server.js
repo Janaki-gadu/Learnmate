@@ -22,7 +22,14 @@ app.use(
 app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));
-app.use("/api/notifications", require("./routes/notificationRoutes"));
+
+// =======================
+// Root Health Check Route
+// =======================
+
+app.get("/", (req, res) => {
+  res.status(200).send("LearnMate API running 🚀");
+});
 
 // =======================
 // Routes
@@ -41,13 +48,8 @@ app.use("/api/groups", groupRoutes);
 // Notes
 app.use("/api/notes", noteRoutes);
 
-// =======================
-// Test Route
-// =======================
-
-app.get("/", (req, res) => {
-  res.send("LearnMate API running 🚀");
-});
+// Notifications
+app.use("/api/notifications", require("./routes/notificationRoutes"));
 
 // =======================
 // Profile Routes
@@ -91,10 +93,10 @@ app.put("/api/profile", authMiddleware, async (req, res) => {
 });
 
 // =======================
-// MongoDB
+// MongoDB Connection
 // =======================
 
-console.log("Mongo:", process.env.MONGO_URI);
+console.log("Mongo URI loaded:", Boolean(process.env.MONGO_URI));
 
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -104,15 +106,15 @@ mongoose
     console.log("DB Connected ✅");
   })
   .catch((err) => {
-    console.log("Mongo error:", err.message);
+    console.error("Mongo connection error:", err.message);
   });
 
 // =======================
-// Server
+// Server Setup (Binding to 0.0.0.0 for Render)
 // =======================
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
