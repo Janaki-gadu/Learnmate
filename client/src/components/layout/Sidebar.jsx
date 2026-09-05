@@ -15,14 +15,14 @@ export default function Sidebar() {
 
   useEffect(() => {
     try {
-      const rawUser = localStorage.getItem("user") || localStorage.getItem("profile");
-      if (rawUser) {
-        const parsed = JSON.parse(rawUser);
-        const data = parsed?.user || parsed;
-        setUserName(data?.name || data?.username || "User");
+      const raw = localStorage.getItem("user") || localStorage.getItem("profile");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const name = parsed?.user?.name || parsed?.name || parsed?.username;
+        if (name) setUserName(name);
       }
     } catch (e) {
-      console.error("Failed to parse user profile:", e);
+      console.error("Error reading user name:", e);
     }
   }, []);
 
@@ -42,18 +42,21 @@ export default function Sidebar() {
   return (
     <aside className="w-72 min-h-screen bg-indigo-600 text-white p-6 flex flex-col justify-between shrink-0 select-none">
       <div>
+        {/* Brand */}
         <div className="flex items-center gap-3">
           <span className="text-3xl">🚀</span>
           <h1 className="text-2xl font-black tracking-tight">LearnMate</h1>
         </div>
 
+        {/* Dynamic User Profile Card */}
         <div className="bg-indigo-500/80 border border-indigo-400/40 rounded-3xl p-5 mt-8">
           <p className="text-indigo-200 text-sm font-medium">Welcome back</p>
           <h2 className="text-2xl font-bold mt-1 text-white capitalize">
-            {userName}
+            {userName || "Student"}
           </h2>
         </div>
 
+        {/* Navigation */}
         <nav className="mt-8 flex flex-col gap-2">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -78,6 +81,7 @@ export default function Sidebar() {
         </nav>
       </div>
 
+      {/* Logout */}
       <button
         onClick={handleLogout}
         className="flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold py-3.5 rounded-2xl transition border border-white/10 w-full"

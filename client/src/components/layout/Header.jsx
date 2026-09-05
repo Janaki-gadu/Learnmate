@@ -21,12 +21,12 @@ export default function Header() {
 
         setCurrentUser((prev) => ({
           ...prev,
-          name: data?.name || data?.username || "User",
+          name: data?.name || data?.username || "Student",
           email: data?.email || "",
         }));
       }
     } catch (e) {
-      console.error("Failed to parse user profile:", e);
+      console.error("Failed to read user data in Header:", e);
     }
   }, []);
 
@@ -56,14 +56,14 @@ export default function Header() {
             className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-2xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition text-left cursor-pointer"
           >
             <div className="h-9 w-9 bg-indigo-600 text-white font-bold rounded-xl flex items-center justify-center text-sm shadow-sm capitalize">
-              {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "U"}
+              {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "S"}
             </div>
             <div>
               <p className="text-sm font-bold text-gray-800 leading-tight capitalize">
-                {currentUser.name}
+                {currentUser.name || "Student"}
               </p>
               <p className="text-[11px] text-gray-400 font-medium">
-                {currentUser.email}
+                {currentUser.email || "Learner"}
               </p>
             </div>
           </button>
@@ -75,9 +75,10 @@ export default function Header() {
         <ProfileModal
           user={currentUser}
           closeModal={() => setShowProfile(false)}
-          onUserUpdated={(updated) =>
-            setCurrentUser((prev) => ({ ...prev, ...updated }))
-          }
+          onUserUpdated={(updated) => {
+            setCurrentUser((prev) => ({ ...prev, ...updated }));
+            localStorage.setItem("user", JSON.stringify({ ...currentUser, ...updated }));
+          }}
         />
       )}
     </>

@@ -13,9 +13,15 @@ export default function Signup() {
 
   const handleSignup = async () => {
     try {
-      const res = await API.post("/signup", form);
-      alert("Signup successful 🎉");
+      await API.post("/signup", form);
 
+      // Store user details so the name is permanently bound to this user
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ name: form.name.trim(), email: form.email.trim().toLowerCase() })
+      );
+
+      alert("Signup successful 🎉");
       navigate("/");
     } catch (err) {
       console.error("Signup error:", err.response?.data || err.message);
@@ -29,19 +35,14 @@ export default function Signup() {
         <div style={{ fontSize: "60px" }}>📚</div>
 
         <h1 style={styles.title}>Create Account</h1>
-
-        <p style={styles.subtitle}>
-          Join LearnMate today
-        </p>
+        <p style={styles.subtitle}>Join LearnMate today</p>
 
         <input
           type="text"
           placeholder="Name"
           value={form.name}
           style={styles.input}
-          onChange={(e) =>
-            setForm({ ...form, name: e.target.value })
-          }
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
 
         <input
@@ -49,9 +50,7 @@ export default function Signup() {
           placeholder="Email"
           value={form.email}
           style={styles.input}
-          onChange={(e) =>
-            setForm({ ...form, email: e.target.value })
-          }
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
 
         <input
@@ -59,9 +58,7 @@ export default function Signup() {
           placeholder="Password"
           value={form.password}
           style={styles.input}
-          onChange={(e) =>
-            setForm({ ...form, password: e.target.value })
-          }
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
 
         <button style={styles.button} onClick={handleSignup}>
@@ -69,8 +66,7 @@ export default function Signup() {
         </button>
 
         <p>
-          Already have an account?{" "}
-          <Link to="/">Login</Link>
+          Already have an account? <Link to="/">Login</Link>
         </p>
       </div>
     </div>
@@ -85,7 +81,6 @@ const styles = {
     alignItems: "center",
     background: "linear-gradient(to bottom right, #dbeafe, #c7d2fe)",
   },
-
   card: {
     background: "white",
     padding: "40px",
@@ -97,27 +92,23 @@ const styles = {
     flexDirection: "column",
     gap: "15px",
   },
-
   title: {
     fontSize: "40px",
     color: "#4338ca",
     fontWeight: "900",
     margin: 0,
   },
-
   subtitle: {
     color: "#4b5563",
     fontSize: "18px",
     marginBottom: "10px",
   },
-
   input: {
     padding: "12px",
     borderRadius: "10px",
     border: "1px solid #ccc",
     fontSize: "16px",
   },
-
   button: {
     padding: "14px",
     borderRadius: "12px",

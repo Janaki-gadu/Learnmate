@@ -20,8 +20,8 @@ API.interceptors.request.use((req) => {
   }
 
   if (token) {
-    // Strip extra quotes if stringified
-    const cleanToken = typeof token === "string" ? token.replace(/^"(.*)"$/, "$1") : token;
+    const cleanToken =
+      typeof token === "string" ? token.replace(/^"(.*)"$/, "$1") : token;
     req.headers.Authorization = `Bearer ${cleanToken}`;
   }
 

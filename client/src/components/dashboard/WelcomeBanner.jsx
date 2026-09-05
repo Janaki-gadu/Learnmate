@@ -8,18 +8,18 @@ export default function WelcomeBanner() {
       const rawUser = localStorage.getItem("user") || localStorage.getItem("profile");
       if (rawUser) {
         const parsed = JSON.parse(rawUser);
-        const data = parsed?.user || parsed;
-        setUserName(data?.name || data?.username || "User");
+        const name = parsed?.user?.name || parsed?.name || parsed?.username;
+        if (name) setUserName(name);
       }
     } catch (e) {
-      console.error(e);
+      console.error("Failed to read user name in WelcomeBanner:", e);
     }
   }, []);
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl p-8 text-white shadow-md relative overflow-hidden">
       <h2 className="text-3xl font-bold capitalize">
-        Welcome back, {userName} 👋
+        Welcome Back, {userName || "Student"} 👋
       </h2>
       <p className="text-blue-100 mt-2 text-lg">
         Ready to learn something new today?
