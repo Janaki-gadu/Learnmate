@@ -12,12 +12,19 @@ export default function Login() {
     try {
       const res = await API.post("/login", form);
 
-      // Save user session & auth token
+      // Extract raw token whether the backend sends { token: "..." } or a raw string
+      const rawToken = res.data?.token || res.data;
+
+      // Save under both keys so any component or Axios interceptor finds what it needs
       localStorage.setItem("profile", JSON.stringify(res.data));
+      localStorage.setItem(
+        "token",
+        typeof rawToken === "string" ? rawToken : JSON.stringify(rawToken)
+      );
 
       alert("Login successful 🎉");
 
-      // Direct full-page redirect to dashboard
+      // Full redirect to mount dashboard cleanly
       window.location.href = "/dashboard";
     } catch (err) {
       console.error("Login error:", err.response?.data || err.message);
